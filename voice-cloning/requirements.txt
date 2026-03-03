@@ -1,0 +1,11 @@
+qwen-tts==0.1.1
+huggingface_hub
+soundfile
+torch
+gradio
+transformers
+pydub
+numpy
+fastapi
+uvicorn
+python-multipart

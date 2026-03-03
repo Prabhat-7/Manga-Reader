@@ -13,29 +13,24 @@ export default function OnePieceChapterListPage() {
       <div className="grid gap-5 lg:grid-cols-[380px_1fr]">
         <ChapterList chapters={chapters} />
 
-        <section className="rounded-[18px] border border-[var(--border)] bg-[var(--surface)] p-4 md:p-6 shadow-[var(--shadow)]">
+        <section className="rounded-[18px] border border-border bg-card p-4 md:p-6 shadow-md">
           <div className="mb-6">
             <div
               className="relative h-64 overflow-hidden rounded-[14px] bg-cover bg-center bg-no-repeat md:h-80"
               style={{
-                backgroundImage:
-                  'url("https://images.unsplash.com/photo-1613376023733-0a73315d9b06?w=1200&q=80")',
+                backgroundImage: 'url("/onepiece-panel-image.jpg")',
               }}
             >
-              <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-t from-black/60 via-black/20 to-transparent">
-                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-white/90 text-2xl text-slate-900 shadow-[0_10px_24px_rgba(15,23,42,0.35)]">
-                  ▶
-                </div>
-              </div>
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent"></div>
             </div>
           </div>
 
           <div className="flex flex-col gap-6 md:flex-row">
             <div className="w-full md:max-w-[220px] md:flex-shrink-0">
               <img
-                src="https://images.unsplash.com/photo-1578632767115-351597cf2477?w=400&q=80"
+                src="/card.png"
                 alt="One Piece Cover"
-                className="block h-auto w-full rounded-[14px] border border-[var(--border)] shadow-[0_12px_30px_rgba(2,6,23,0.35)]"
+                className="block h-auto w-full rounded-[14px] border border-border shadow-[0_12px_30px_rgba(2,6,23,0.35)]"
               />
             </div>
 
@@ -47,19 +42,19 @@ export default function OnePieceChapterListPage() {
                 <span className="inline-flex rounded-full bg-sky-100 px-3 py-1 text-xs font-bold text-sky-900 dark:bg-sky-900/35 dark:text-sky-100">
                   HD
                 </span>
-                <span className="inline-flex rounded-full bg-[var(--primary-soft)] px-3 py-1 text-xs font-bold text-[var(--badge-text)]">
+                <span className="inline-flex rounded-full bg-primary/20 px-3 py-1 text-xs font-bold text-primary">
                   CC {chapters.length}
                 </span>
-                <span className="inline-flex rounded-full bg-[var(--surface-muted)] px-3 py-1 text-xs font-bold text-[var(--muted)]">
+                <span className="inline-flex rounded-full bg-muted px-3 py-1 text-xs font-bold text-muted-foreground">
                   Manga
                 </span>
               </div>
 
-              <h1 className="m-0 text-[clamp(1.7rem,3.2vw,2.35rem)] font-bold leading-tight text-[var(--text)]">
+              <h1 className="m-0 text-[clamp(1.7rem,3.2vw,2.35rem)] font-bold leading-tight text-foreground">
                 {ONE_PIECE_TITLE}
               </h1>
 
-              <p className="m-0 max-w-[68ch] leading-relaxed text-[var(--muted)]">
+              <p className="m-0 max-w-[68ch] leading-relaxed text-muted-foreground">
                 Gold Roger was known as the &quot;Pirate King,&quot; the
                 strongest and most
                 infamous being to have sailed the Grand Line. The capture and
@@ -72,7 +67,7 @@ export default function OnePieceChapterListPage() {
               <div className="mt-1 flex flex-wrap gap-2.5">
                 <Link
                   href={`/manga/onepiece/${reversedChapters[0]}`}
-                  className="inline-flex items-center justify-center rounded-[10px] bg-[var(--primary)] px-4 py-[11px] font-bold text-white no-underline transition hover:bg-[var(--primary-hover)]"
+                  className="inline-flex items-center justify-center rounded-[10px] bg-primary px-4 py-[11px] font-bold text-primary-foreground no-underline transition hover:bg-primary/90"
                 >
                   Read Latest
                 </Link>

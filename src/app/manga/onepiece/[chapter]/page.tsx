@@ -33,16 +33,16 @@ export default async function OnePieceChapterReaderPage({
 
   return (
     <main className="w-full">
-      <header className="fixed inset-x-0 top-0 z-50 flex h-[60px] items-center justify-between border-b border-[var(--border)] bg-[var(--surface)] px-3 shadow-[0_4px_6px_-1px_rgba(0,0,0,0.1),0_2px_4px_-1px_rgba(0,0,0,0.06)] sm:px-6">
+      <header className="fixed inset-x-0 top-0 z-50 flex h-[60px] items-center justify-between border-b border-border bg-card px-3 shadow-md sm:px-6">
         <div className="flex items-center gap-3">
           <Link
             href="/manga/onepiece"
-            className="text-[1.1rem] font-bold text-[var(--text)] no-underline"
+            className="text-[1.1rem] font-bold text-card-foreground no-underline"
           >
             {ONE_PIECE_TITLE}
           </Link>
-          <span className="flex items-center text-[0.95rem] text-[var(--muted)]">
-            <span className="mr-3 inline-block h-1 w-1 rounded-full bg-[var(--muted)]" />
+          <span className="flex items-center text-[0.95rem] text-muted-foreground">
+            <span className="mr-3 inline-block h-1 w-1 rounded-full bg-muted-foreground" />
             Chapter {chapter}
           </span>
         </div>
@@ -51,19 +51,19 @@ export default async function OnePieceChapterReaderPage({
           {prevChapter ? (
             <Link
               href={`/manga/onepiece/${prevChapter}`}
-              className="inline-flex items-center justify-center rounded-md border border-[var(--border)] bg-[var(--bg-mid)] px-3 py-1.5 text-[0.85rem] font-semibold text-[var(--text)] no-underline transition hover:border-[var(--primary)] hover:bg-[var(--primary-soft)] hover:text-[var(--primary)]"
+              className="inline-flex items-center justify-center rounded-md border border-border bg-muted/50 px-3 py-1.5 text-[0.85rem] font-semibold text-foreground no-underline transition hover:border-primary hover:bg-primary/20 hover:text-primary"
             >
               Previous
             </Link>
           ) : (
-            <span className="pointer-events-none inline-flex cursor-not-allowed items-center justify-center rounded-md border border-[var(--border)] bg-[var(--bg-mid)] px-3 py-1.5 text-[0.85rem] font-semibold text-[var(--text)] opacity-50">
+            <span className="pointer-events-none inline-flex cursor-not-allowed items-center justify-center rounded-md border border-border bg-muted/50 px-3 py-1.5 text-[0.85rem] font-semibold text-foreground opacity-50">
               Previous
             </span>
           )}
 
           <Link
             href={`/manga/onepiece/${nextChapter}`}
-            className="inline-flex items-center justify-center rounded-md border border-[var(--border)] bg-[var(--bg-mid)] px-3 py-1.5 text-[0.85rem] font-semibold text-[var(--text)] no-underline transition hover:border-[var(--primary)] hover:bg-[var(--primary-soft)] hover:text-[var(--primary)]"
+            className="inline-flex items-center justify-center rounded-md border border-border bg-muted/50 px-3 py-1.5 text-[0.85rem] font-semibold text-foreground no-underline transition hover:border-primary hover:bg-primary/20 hover:text-primary"
           >
             Next
           </Link>
@@ -72,7 +72,7 @@ export default async function OnePieceChapterReaderPage({
 
       {imageUrls.length > 0 ? (
         <section
-          className="h-[100svh] snap-y snap-mandatory overflow-y-auto overscroll-y-contain bg-[var(--bg-mid)] pt-[60px]"
+          className="h-[100svh] snap-y snap-mandatory overflow-y-auto overscroll-y-contain bg-background pt-[60px]"
           aria-label={`Chapter ${chapter} pages`}
         >
           {imageUrls.map((imageUrl, index) => (
@@ -86,15 +86,15 @@ export default async function OnePieceChapterReaderPage({
                 alt={`One Piece chapter ${chapter} page ${index + 1}`}
                 className="block h-auto max-h-[calc(100svh-56px)] w-auto max-w-full rounded-[10px] shadow-[0_14px_36px_rgba(0,0,0,0.35)] sm:max-h-[calc(100svh-64px)]"
               />
-              <figcaption className="mt-2 text-[0.9rem] font-semibold text-slate-300">
+              <figcaption className="mt-2 text-[0.9rem] font-semibold text-muted-foreground">
                 Page {index + 1}
               </figcaption>
             </figure>
           ))}
         </section>
       ) : (
-        <section className="mx-auto mt-24 w-[min(1120px,92vw)] rounded-[18px] border border-[var(--border)] bg-[var(--surface)] p-6 shadow-[var(--shadow)]">
-          <p className="m-0 font-bold text-[var(--danger)]">
+        <section className="mx-auto mt-24 w-[min(1120px,92vw)] rounded-[18px] border border-border bg-card p-6 shadow-md">
+          <p className="m-0 font-bold text-destructive">
             No pages were detected for this chapter on the host.
           </p>
         </section>

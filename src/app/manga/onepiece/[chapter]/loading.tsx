@@ -1,10 +1,35 @@
-function PageSkeleton({ index }: { index: number }) {
+import type { ReactNode } from "react";
+
+function Panel({ className }: { className?: string }) {
   return (
     <div
-      className="mx-auto flex min-h-[90svh] w-[min(980px,96vw)] animate-pulse items-center justify-center rounded-[10px] bg-muted"
-      style={{ animationDelay: `${index * 120}ms` }}
-    >
-      <div className="h-6 w-48 rounded bg-muted-foreground/20" />
+      className={`rounded-[4px] animate-pulse-scale ${className ?? "bg-muted/60 dark:bg-muted/40"}`}
+    />
+  );
+}
+
+function MangaPageSkeleton() {
+  return (
+    <div className="mx-auto w-[min(980px,96vw)] p-2 sm:p-3 bg-muted/20 dark:bg-muted/10 rounded-[12px]">
+      <div className="space-y-2 sm:space-y-3">
+        <div className="grid h-[220px] grid-cols-[1fr_2.9fr] gap-2 sm:h-[300px] sm:gap-3">
+          <Panel />
+          <Panel />
+        </div>
+
+        <div className="grid h-[220px] grid-cols-[1fr_1fr_1.45fr] gap-2 sm:h-[300px] sm:gap-3">
+          <Panel />
+          <Panel />
+          <Panel />
+        </div>
+
+        <div className="grid h-[220px] grid-cols-[0.45fr_1fr_1fr_1fr] gap-2 sm:h-[300px] sm:gap-3">
+          <Panel />
+          <Panel />
+          <Panel />
+          <Panel />
+        </div>
+      </div>
     </div>
   );
 }
@@ -24,8 +49,8 @@ export default function OnePieceChapterLoading() {
       </header>
 
       <section className="grid gap-3 bg-background px-2 pb-3 pt-[68px] sm:px-3">
-        {Array.from({ length: 3 }, (_, index) => (
-          <PageSkeleton key={index} index={index} />
+        {Array.from({ length: 2 }, (_, index) => (
+          <MangaPageSkeleton key={index} />
         ))}
       </section>
     </main>

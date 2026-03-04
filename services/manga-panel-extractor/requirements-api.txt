@@ -1,14 +1,6 @@
 numpy
-opencv-contrib-python
 opencv_python_headless
-PyQt6
-PyQt6_sip
-argparse
-dataclasses
 tqdm
-pyqt6-tools
-torch
-yolov5
 fastapi
 uvicorn
 python-dotenv

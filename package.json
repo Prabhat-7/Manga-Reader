@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "dev:docling": "cd services/docling-api && uv run fastapi dev main.py --port 8002",
+    "dev:manga-panel-extractor": "cd services/manga-panel-extractor && uv run --with-requirements requirements-api.txt -m uvicorn main:app --host 127.0.0.1 --port 8003 --reload",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",

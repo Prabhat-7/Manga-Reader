@@ -21,41 +21,32 @@ type RouteContext = {
   }>;
 };
 
-function stubResponse(path: string, method: string): Response {
-  return Response.json({
-    service: "manga-panel-extractor",
-    status: "stub",
-    detail:
-      "MANGA_PANEL_EXTRACTOR_BASE_URL is not configured yet. This endpoint is scaffolded and ready for future wiring.",
-    method,
-    path,
-  });
-}
-
 async function proxyRequest(
   request: NextRequest,
   context: RouteContext,
 ): Promise<Response> {
+  const baseUrl = process.env.MANGA_PANEL_EXTRACTOR_BASE_URL;
+
+  if (!baseUrl) {
+    return Response.json(
+      { error: "MANGA_PANEL_EXTRACTOR_BASE_URL is not configured." },
+      { status: 500 },
+    );
+  }
+
+  const cleanBase = baseUrl.replace(/\/+$/, "");
   const incomingUrl = new URL(request.url);
   const resolvedParams = await context.params;
   const upstreamPath = (resolvedParams.path ?? [])
     .map(encodeURIComponent)
     .join("/");
-  const routePath = `/api/manga-panel-extractor/${upstreamPath}`.replace(/\/+$/, "");
-  const method = request.method.toUpperCase();
-  const baseUrl = process.env.MANGA_PANEL_EXTRACTOR_BASE_URL;
-
-  if (!baseUrl) {
-    return stubResponse(routePath || "/api/manga-panel-extractor", method);
-  }
-
-  const cleanBase = baseUrl.replace(/\/+$/, "");
   const upstreamUrl = new URL(`${cleanBase}/${upstreamPath}`);
   upstreamUrl.search = incomingUrl.search;
 
   const headers = new Headers(request.headers);
   HOP_BY_HOP_HEADERS.forEach((header) => headers.delete(header));
 
+  const method = request.method.toUpperCase();
   const shouldIncludeBody = !["GET", "HEAD"].includes(method);
   const bodyBuffer = shouldIncludeBody ? await request.arrayBuffer() : undefined;
   const body = bodyBuffer && bodyBuffer.byteLength > 0 ? bodyBuffer : undefined;
@@ -82,16 +73,10 @@ async function proxyRequest(
       error instanceof Error
         ? error.message
         : "Unknown manga-panel-extractor proxy error.";
-    return Response.json({
-      service: "manga-panel-extractor",
-      status: "stub",
-      detail:
-        "Proxy target is unreachable. Falling back to stub response until the extractor API is wired.",
-      method,
-      path: routePath || "/api/manga-panel-extractor",
-      proxyTarget: baseUrl,
-      proxyError: message,
-    });
+    return Response.json(
+      { error: "Could not reach manga-panel-extractor API server.", detail: message },
+      { status: 502 },
+    );
   }
 }
 

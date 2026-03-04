@@ -133,7 +133,7 @@ curl -X POST "http://127.0.0.1:3000/api/docling/docling" \
   -d '{"url": "https://example.com/document.pdf"}'
 ```
 
-## Manga Panel Extractor Integration (Scaffold)
+## Manga Panel Extractor Integration
 
 The sibling repository is now included at:
 
@@ -145,13 +145,49 @@ Next.js exposes a new endpoint namespace:
 
 - `/api/manga-panel-extractor/*`
 
-Current behavior:
+Run the extractor API:
 
-- If `MANGA_PANEL_EXTRACTOR_BASE_URL` is configured, requests are proxied there.
-- If it is not configured, the route returns a stub JSON response (so calls do not 404 while service wiring is pending).
+```bash
+pnpm dev:manga-panel-extractor
+```
+
+Or manually:
+
+```bash
+cd services/manga-panel-extractor
+uv run --with-requirements requirements-api.txt -m uvicorn main:app --host 127.0.0.1 --port 8003 --reload
+```
+
+The service exposes:
+
+- `GET /health`
+- `POST /extract`
+
+Create `services/manga-panel-extractor/.env` with:
+
+```env
+UPLOADTHING_TOKEN=your_uploadthing_token_here
+SECRET_KEY=your_manga_panel_extractor_api_key_here
+```
+
+`POST /extract` accepts exactly one input source:
+
+- `image_url` (remote image URL), or
+- `input_dir` (local directory with image files)
+
+The endpoint extracts panels, uploads all extracted panels to UploadThing, and returns panel URLs.
 
 Example call:
 
 ```bash
-curl "http://127.0.0.1:3000/api/manga-panel-extractor/health"
+curl -X POST "http://127.0.0.1:3000/api/manga-panel-extractor/extract" \
+  -H "Authorization: Bearer your_manga_panel_extractor_api_key_here" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "image_url": "https://example.com/manga-page.jpg",
+    "fallback": true,
+    "split_joint_panels": false,
+    "mode": "bounding",
+    "merge": "none"
+  }'
 ```

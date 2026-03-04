@@ -6,7 +6,6 @@ import numpy as np
 from image_processing.image import is_contour_rectangular, apply_adaptive_threshold, group_contours_horizontally, group_contours_vertically, adaptive_hconcat, adaptive_vconcat, group_bounding_boxes_horizontally, group_bounding_boxes_vertically
 from myutils.myutils import load_images, load_image
 from tqdm import tqdm
-from image_processing.model import model
 
 class OutputMode:
     BOUNDING = 'bounding'
@@ -452,6 +451,8 @@ def generate_panel_blocks_by_ai(image: np.ndarray, merge: str = MergeMode.NONE) 
     """
     Generates the separate panel images from the base image using AI with merge
     """
+    from image_processing.model import model
+
     grayscale_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     processed_image = preprocess_image(grayscale_image)
 

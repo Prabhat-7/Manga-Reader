@@ -1,0 +1,31 @@
+# Git
+.git
+.gitignore
+
+# Environment & Config
+.env
+.venv/
+.python-version
+pyrightconfig.json
+uv.lock
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.ruff_cache/
+.pytest_cache/
+.mypy_cache/
+
+# Docker
+Dockerfile
+.dockerignore
+
+# Build
+Makefile
+
+# Documentation & Tests
+README.md
+test-input.json
+tests/

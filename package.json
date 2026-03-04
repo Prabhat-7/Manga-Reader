@@ -4,10 +4,12 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "dev:docling": "cd services/docling-api && uv run fastapi dev main.py --port 8002",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "docling:install": "cd services/docling-api && uv sync"
   },
   "dependencies": {
     "class-variance-authority": "^0.7.1",

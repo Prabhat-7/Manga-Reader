@@ -1,0 +1,4 @@
+docling>=2.66.0
+runpod
+python-dotenv>=1.2.1
+uploadthing-py @ git+https://github.com/DevDeepakBhattarai/uploadthing-py.git

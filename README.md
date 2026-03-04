@@ -22,6 +22,7 @@ Copy `.env.example` to `.env.local` and adjust values if needed:
 FASTAPI_BASE_URL=http://127.0.0.1:8000
 VOICE_CLONING_BASE_URL=http://127.0.0.1:8001
 DOCLING_BASE_URL=http://127.0.0.1:8002
+MANGA_PANEL_EXTRACTOR_BASE_URL=http://127.0.0.1:8003
 NEXT_PUBLIC_API_BASE_PATH=/api/backend
 ```
 
@@ -130,4 +131,27 @@ curl -X POST "http://127.0.0.1:3000/api/docling/docling" \
   -H "Authorization: Bearer your_docling_api_key_here" \
   -H "Content-Type: application/json" \
   -d '{"url": "https://example.com/document.pdf"}'
+```
+
+## Manga Panel Extractor Integration (Scaffold)
+
+The sibling repository is now included at:
+
+```bash
+services/manga-panel-extractor
+```
+
+Next.js exposes a new endpoint namespace:
+
+- `/api/manga-panel-extractor/*`
+
+Current behavior:
+
+- If `MANGA_PANEL_EXTRACTOR_BASE_URL` is configured, requests are proxied there.
+- If it is not configured, the route returns a stub JSON response (so calls do not 404 while service wiring is pending).
+
+Example call:
+
+```bash
+curl "http://127.0.0.1:3000/api/manga-panel-extractor/health"
 ```

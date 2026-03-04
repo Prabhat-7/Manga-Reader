@@ -2,6 +2,7 @@ import { type NextRequest } from "next/server";
 import { PDFDocument } from "pdf-lib";
 
 import {
+  getOnePieceImageRequestHeaders,
   getOnePieceChapterImages,
   isValidOnePieceChapter,
   parseOnePieceChapter,
@@ -15,17 +16,10 @@ type RouteContext = {
   }>;
 };
 
-const IMAGE_FETCH_HEADERS = new Headers({
-  referer: "https://scans-hot.planeptune.us/manga/",
-  "user-agent":
-    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36",
-  accept: "image/avif,image/webp,image/apng,image/*,*/*;q=0.8",
-});
-
 async function fetchImageBytes(imageUrl: string): Promise<Uint8Array> {
   const response = await fetch(imageUrl, {
     cache: "no-store",
-    headers: IMAGE_FETCH_HEADERS,
+    headers: getOnePieceImageRequestHeaders(imageUrl),
   });
 
   if (!response.ok) {

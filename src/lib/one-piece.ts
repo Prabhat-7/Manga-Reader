@@ -1,9 +1,7 @@
-const REQUEST_HEADERS = new Headers({
-  referer: "https://scans-hot.planeptune.us/manga/",
-  "user-agent":
-    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36",
-  accept: "image/avif,image/webp,image/apng,image/*,*/*;q=0.8",
-});
+const DEFAULT_REFERER = "https://scans-hot.planeptune.us/manga/";
+const SCANS_HOST = "scans-hot.planeptune.us";
+const HOT_HOST = "hot.planeptune.us";
+const CHAPTER_SPLIT_FOR_HOST_PRIORITY = 1100;
 
 const PAGE_SCAN_LIMIT = 80;
 const MAX_INITIAL_MISSES = 5;
@@ -39,16 +37,17 @@ async function probeImage(url: string): Promise<boolean> {
   let exists = false;
 
   try {
+    const requestHeaders = getOnePieceImageRequestHeaders(url);
     const headResponse = await fetch(url, {
       method: "HEAD",
       cache: "no-store",
-      headers: REQUEST_HEADERS,
+      headers: requestHeaders,
     });
 
     if (headResponse.ok) {
       exists = true;
     } else if (headResponse.status === 405 || headResponse.status === 501) {
-      const getHeaders = new Headers(REQUEST_HEADERS);
+      const getHeaders = new Headers(requestHeaders);
       getHeaders.set("range", "bytes=0-0");
 
       const getResponse = await fetch(url, {
@@ -82,6 +81,43 @@ export function buildOnePieceImageUrl(chapter: number, page: number): string {
   return `https://scans-hot.planeptune.us/manga/One-Piece/${chapter}-${String(page).padStart(3, "0")}.png`;
 }
 
+export function buildLegacyOnePieceImageUrl(chapter: number, page: number): string {
+  return `https://hot.planeptune.us/manga/One-Piece/${String(chapter).padStart(4, "0")}-${String(page).padStart(3, "0")}.png`;
+}
+
+export function getOnePieceImageRequestHeaders(imageUrl: string): Headers {
+  let referer = DEFAULT_REFERER;
+
+  try {
+    const { host } = new URL(imageUrl);
+    if (host === HOT_HOST) {
+      referer = "https://hot.planeptune.us/manga/";
+    } else if (host === SCANS_HOST) {
+      referer = "https://scans-hot.planeptune.us/manga/";
+    }
+  } catch {
+    referer = DEFAULT_REFERER;
+  }
+
+  return new Headers({
+    referer,
+    "user-agent":
+      "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36",
+    accept: "image/avif,image/webp,image/apng,image/*,*/*;q=0.8",
+  });
+}
+
+function getOnePieceImageCandidates(chapter: number, page: number): string[] {
+  const legacyUrl = buildLegacyOnePieceImageUrl(chapter, page);
+  const currentUrl = buildOnePieceImageUrl(chapter, page);
+
+  if (chapter <= CHAPTER_SPLIT_FOR_HOST_PRIORITY) {
+    return [legacyUrl, currentUrl];
+  }
+
+  return [currentUrl, legacyUrl];
+}
+
 export function getOnePieceChapterList(): number[] {
   return Array.from(
     { length: ONE_PIECE_CHAPTER_END - ONE_PIECE_CHAPTER_START + 1 },
@@ -104,10 +140,18 @@ export async function getOnePieceChapterImages(chapter: number): Promise<string[
   let trailingMisses = 0;
 
   for (let pageNumber = 1; pageNumber <= PAGE_SCAN_LIMIT; pageNumber += 1) {
-    const imageUrl = buildOnePieceImageUrl(chapter, pageNumber);
-    const exists = await probeImage(imageUrl);
+    const candidates = getOnePieceImageCandidates(chapter, pageNumber);
+    let imageUrl: string | null = null;
 
-    if (exists) {
+    for (const candidate of candidates) {
+      const exists = await probeImage(candidate);
+      if (exists) {
+        imageUrl = candidate;
+        break;
+      }
+    }
+
+    if (imageUrl) {
       images.push(imageUrl);
       trailingMisses = 0;
       continue;

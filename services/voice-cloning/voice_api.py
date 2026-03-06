@@ -123,7 +123,7 @@ def load_stt_pipeline(stt_model_source: str, device: str, dtype_name: str):
         import transformers  # noqa: F401
     except ImportError as exc:
         raise RuntimeError(
-            "Missing dependency 'transformers'. Install with: pip install -r requirements.txt"
+            "Missing dependency 'transformers'. Run: uv sync"
         ) from exc
 
     stt_source = stt_model_source.strip()
@@ -187,7 +187,7 @@ def load_audio_for_stt(audio_path: str) -> tuple[Any, float]:
     try:
         import numpy as np
     except ImportError as exc:
-        raise RuntimeError("Missing dependency 'numpy'. Install with: pip install numpy") from exc
+        raise RuntimeError("Missing dependency 'numpy'. Run: uv sync") from exc
 
     audio = AudioSegment.from_file(audio_path)
     duration_seconds = float(len(audio)) / 1000.0

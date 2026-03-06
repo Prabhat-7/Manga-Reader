@@ -9,16 +9,30 @@ This folder is a focused voice-cloning extraction from `Qwen3-TTS`, containing o
 ## Setup
 
 ```bash
-cd voice-cloning
-uv venv .venv
-uv pip install -U pip
-uv pip install -r requirements.txt
+cd services/voice-cloning
+uv sync
 ```
+
+## Optional: Apple Silicon MLX Hybrid Acceleration
+
+For faster voice cloning on Apple Silicon, this project can patch Qwen's decode path with MLX (hybrid mode).
+
+```bash
+git clone https://github.com/eris-ths/eris-voice.git
+uv add mlx
+```
+
+Notes:
+
+- Works on macOS + Apple Silicon only.
+- Uses MLX for tokenizer decode (and optionally quantizer), while preserving `generate_voice_clone` behavior.
+- Requires `eris-voice/src` (or pass a custom path with `--eris-src-dir`).
+- Current biggest latency is still the Base model talker generation; MLX hybrid mainly accelerates decode stages.
 
 ## Download Model Weights
 
 ```bash
-uv run --python .venv/bin/python download_model.py
+uv run download_model.py
 ```
 
 This downloads to:
@@ -37,12 +51,18 @@ Optional flags:
 Launch the web UI:
 
 ```bash
-uv run --python .venv/bin/python gui_app.py --host 127.0.0.1 --port 7860
+uv run gui_app.py --host 127.0.0.1 --port 7860
 ```
 
 Then open:
 
 - `http://127.0.0.1:7860`
+
+Startup behavior:
+
+- GUI now preloads the TTS model at launch and runs one short warmup inference by default.
+- This shifts cold-start overhead to startup so the first real clone request is faster.
+- Disable if needed with `--no-preload-tts` and/or `--no-warmup-tts`.
 
 GUI flow:
 
@@ -53,40 +73,34 @@ GUI flow:
 - Enter target text to synthesize
 - Generate cloned speech
 - Swipe/seek in waveform player and download the output WAV
+- Repeated runs with the same reference audio now reuse a cached voice-clone prompt to reduce per-run overhead.
 
 Notes:
 
 - Auto-transcribe defaults to local `models/whisper-small` if it exists, otherwise `openai/whisper-small`.
 - For long audio (>30s), timestamps are enabled automatically for Whisper long-form transcription.
 - For `.m4a` and other compressed formats, make sure `ffmpeg` is installed (`ffmpeg`/`ffprobe` in `PATH`).
+- To use MLX hybrid in GUI by default, launch with `--mlx-hybrid`.
 
 ## Run API Server
 
 ```bash
-cd voice-cloning
-uv run --python .venv/bin/python -m uvicorn voice_api:app --host 127.0.0.1 --port 8001 --reload
+cd services/voice-cloning
+uv run -m uvicorn voice_api:app --host 127.0.0.1 --port 8001 --reload
 ```
 
 ### API Endpoints
 
-- `GET /health`: health check.
-- `POST /transcribe`: multipart form with `reference_audio` + optional `language`, `stt_model`, `device`, `dtype`.
-- `POST /clone`: multipart form with `reference_audio`, `target_text` and optional `ref_text`, `voice_description`, `x_vector_only_mode`, `language`, `model_dir`, `hf_model`, `device`, `dtype`.
-
-Example:
-
-```bash
-curl -X POST http://127.0.0.1:8001/transcribe \
-  -F "reference_audio=@inputs/Luffy.m4a" \
-  -F "language=English"
-```
+- `GET /health`
+- `POST /transcribe`
+- `POST /clone`
 
 ## Run Voice Cloning
 
 With transcript (best quality):
 
 ```bash
-uv run --python .venv/bin/python app.py \
+uv run app.py \
   --ref-audio inputs/my_voice.m4a \
   --ref-text "Hello, this is my reference voice sample." \
   --text "This sentence is generated in my cloned voice." \
@@ -97,15 +111,33 @@ uv run --python .venv/bin/python app.py \
 Without transcript (automatic x-vector-only fallback):
 
 ```bash
-uv run --python .venv/bin/python app.py \
+uv run app.py \
   --ref-audio inputs/my_voice.m4a \
   --text "This is a fast clone using speaker embedding only." \
   --language English \
   --output outputs/my_clone_xvec.wav
 ```
 
+With MLX hybrid decode enabled:
+
+```bash
+uv run app.py \
+  --ref-audio inputs/my_voice.m4a \
+  --ref-text "Hello, this is my reference voice sample." \
+  --text "This sentence is generated in my cloned voice." \
+  --language English \
+  --mlx-hybrid \
+  --output outputs/my_clone_mlx.wav
+```
+
+If you want MLX decoder only (PyTorch quantizer):
+
+```bash
+uv run app.py ... --mlx-hybrid --mlx-disable-quantizer
+```
+
 ## Standalone Notes
 
 - This project is standalone and does not require a sibling `Qwen3-TTS` checkout.
-- Runtime dependency is installed from PyPI via `qwen-tts` in `requirements.txt`.
+- Runtime dependencies are managed by `uv` using `pyproject.toml`.
 - Models are loaded from `models/` if present, otherwise from Hugging Face model id fallback.

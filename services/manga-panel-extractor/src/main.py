@@ -32,8 +32,8 @@ def make_parser() -> argparse.ArgumentParser:
     
     parser.add_argument("input_dir", type=str, nargs="?", help="Input directory")
     parser.add_argument("output_dir", type=str, nargs="?", help="Output directory")
-    parser.add_argument("-s", "--split-joint-panels", action="store_true", help="Split joint panels")
-    parser.add_argument("-f", "--fallback", action="store_true", help="Fallback to a more aggressive method if the first one fails")
+    parser.add_argument("-s", "-S", "--split-joint-panels", action="store_true", help="Split joint panels")
+    parser.add_argument("-f", "-F", "--fallback", action="store_true", help="Fallback to a more aggressive method if the first one fails")
     parser.add_argument("-g", "--gui", action="store_true", help="Use GUI")
     parser.add_argument("-v", "--version", action="version", version="Manga-Panel-Extractor v1.1.1")
     

@@ -44,20 +44,20 @@ Visit the [Releases](https://github.com/adenzu/Manga-Panel-Extractor/releases) s
 ### CLI - Input and Output Directories
 
 ```bash
-python main.py [input_dir] [output_dir] [-s] [-f] [-g]
+python main.py [input_dir] [output_dir] [-s|-S] [-f|-F] [-g]
 ```
 
 or
 
 ```bash
-python main.py [input_img_path] [-s] [-f] [-g]
+python main.py [input_img_path] [-s|-S] [-f|-F] [-g]
 ```
 
 - `[input_img_path]`: Input image path.
 - `[input_dir]`: Input directory.
 - `[output_dir]` (optional): Output directory.
-- `-s` or `--split-joint-panels` (optional): Split joint panels.
-- `-f` or `--fallback` (optional): Fallback to a more aggressive method if the first one fails.
+- `-s` / `-S` or `--split-joint-panels` (optional): Split joint panels.
+- `-f` / `-F` or `--fallback` (optional): Fallback to a more aggressive method if the first one fails.
 - `-g` or `--gui` (optional): Use GUI.
 
 ## Program Explanation and Examples

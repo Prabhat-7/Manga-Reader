@@ -54,7 +54,7 @@ class ExtractPanelsRequest(BaseModel):
     image_url: HttpUrl | None = None
     input_dir: str | None = None
     fallback: bool = True
-    split_joint_panels: bool = False
+    split_joint_panels: bool = True
     mode: Literal["bounding", "masked"] = OutputMode.BOUNDING
     merge: Literal["none", "vertical", "horizontal"] = MergeMode.NONE
 

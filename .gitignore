@@ -31,3 +31,6 @@ next-env.d.ts
 /voice-cloning/models/
 /voice-cloning/inputs/
 /voice-cloning/outputs/
+/services/voice-cloning/models/
+/services/voice-cloning/inputs/
+/services/voice-cloning/outputs/

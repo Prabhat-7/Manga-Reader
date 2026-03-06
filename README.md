@@ -52,15 +52,27 @@ This avoids browser-side CORS complexity and keeps backend URL details on the se
 
 ## Voice Cloning Integration
 
-The `voice-cloning/` folder is now merged into this project and includes a FastAPI service at `voice-cloning/voice_api.py`.
+The sibling voice-cloning project is now included in this repository at:
+
+```bash
+services/voice-cloning
+```
+
+It includes a FastAPI service at `services/voice-cloning/voice_api.py`.
 
 Run the voice cloning API in a separate terminal:
 
 ```bash
-cd voice-cloning
-uv venv .venv
-uv pip install -r requirements.txt
-uv run --python .venv/bin/python -m uvicorn voice_api:app --host 127.0.0.1 --port 8001 --reload
+pnpm voice-cloning:install
+pnpm dev:voice-cloning
+```
+
+Or manually:
+
+```bash
+cd services/voice-cloning
+uv sync
+uv run -m uvicorn voice_api:app --host 127.0.0.1 --port 8001 --reload
 ```
 
 Next.js proxies all voice-cloning requests to `VOICE_CLONING_BASE_URL` through:
@@ -186,7 +198,7 @@ curl -X POST "http://127.0.0.1:3000/api/manga-panel-extractor/extract" \
   -d '{
     "image_url": "https://example.com/manga-page.jpg",
     "fallback": true,
-    "split_joint_panels": false,
+    "split_joint_panels": true,
     "mode": "bounding",
     "merge": "none"
   }'

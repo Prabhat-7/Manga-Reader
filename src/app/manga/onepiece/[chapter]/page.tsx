@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import ChapterReaderClient from "./ChapterReaderClient";
+
 import {
   ONE_PIECE_TITLE,
   getOnePieceChapterImages,
@@ -27,7 +29,7 @@ export default async function OnePieceChapterReaderPage({
   }
 
   const imageUrls = await getOnePieceChapterImages(chapter);
-  
+
   const prevChapter = chapter > 1 ? chapter - 1 : null;
   const nextChapter = chapter + 1; // Assuming open-ended or handle max chapter if known
 
@@ -71,27 +73,7 @@ export default async function OnePieceChapterReaderPage({
       </header>
 
       {imageUrls.length > 0 ? (
-        <section
-          className="h-[100svh] snap-y snap-mandatory overflow-y-auto overscroll-y-contain bg-background pt-[60px]"
-          aria-label={`Chapter ${chapter} pages`}
-        >
-          {imageUrls.map((imageUrl, index) => (
-            <figure
-              key={imageUrl}
-              className="m-0 flex min-h-[100svh] snap-start snap-always flex-col items-center justify-center p-2 sm:p-[14px]"
-            >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={imageUrl}
-                alt={`One Piece chapter ${chapter} page ${index + 1}`}
-                className="block h-auto max-h-[calc(100svh-56px)] w-auto max-w-full rounded-[10px] shadow-[0_14px_36px_rgba(0,0,0,0.35)] sm:max-h-[calc(100svh-64px)]"
-              />
-              <figcaption className="mt-2 text-[0.9rem] font-semibold text-muted-foreground">
-                Page {index + 1}
-              </figcaption>
-            </figure>
-          ))}
-        </section>
+        <ChapterReaderClient chapter={chapter} imageUrls={imageUrls} />
       ) : (
         <section className="mx-auto mt-24 w-[min(1120px,92vw)] rounded-[18px] border border-border bg-card p-6 shadow-md">
           <p className="m-0 font-bold text-destructive">

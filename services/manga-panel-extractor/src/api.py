@@ -264,7 +264,7 @@ async def extract_panels(
             ),
         )
 
-    panel_urls_by_source: dict[str, list[str]] = {
+    panels_by_source: dict[str, list[dict[str, int | str]]] = {
         source_name: [] for source_name in source_order
     }
     upload_failures: list[dict[str, str | int | None]] = []
@@ -272,7 +272,12 @@ async def extract_panels(
     for index, result in enumerate(results):
         source_name, panel_index = upload_manifest[index]
         if result.is_success and result.data:
-            panel_urls_by_source[source_name].append(result.data.url)
+            panels_by_source[source_name].append(
+                {
+                    "panel_index": panel_index,
+                    "panel_url": result.data.url,
+                }
+            )
         else:
             error_message = str(result.error) if result.error else "Unknown upload error"
             upload_failures.append(
@@ -292,25 +297,45 @@ async def extract_panels(
             },
         )
 
+    ordered_panels_by_source = {
+        source_name: sorted(
+            panels_by_source[source_name], key=lambda panel: int(panel["panel_index"])
+        )
+        for source_name in source_order
+    }
+
     source_results = [
         {
             "source_name": source_name,
-            "panel_count": len(panel_urls_by_source[source_name]),
-            "panel_urls": panel_urls_by_source[source_name],
+            "panel_count": len(ordered_panels_by_source[source_name]),
+            "panels": ordered_panels_by_source[source_name],
+            "panel_urls": [
+                str(panel["panel_url"]) for panel in ordered_panels_by_source[source_name]
+            ],
         }
         for source_name in source_order
     ]
 
-    all_panel_urls = [
-        url
+    all_panels = [
+        {
+            "source_name": source_name,
+            "panel_index": int(panel["panel_index"]),
+            "panel_url": str(panel["panel_url"]),
+        }
         for source_name in source_order
-        for url in panel_urls_by_source[source_name]
+        for panel in ordered_panels_by_source[source_name]
+    ]
+
+    all_panel_urls = [
+        panel["panel_url"]
+        for panel in all_panels
     ]
 
     return {
         "success": True,
         "total_input_images": len(source_images),
         "total_panels": len(all_panel_urls),
+        "panels": all_panels,
         "panel_urls": all_panel_urls,
         "sources": source_results,
     }

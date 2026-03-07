@@ -189,6 +189,12 @@ SECRET_KEY=your_manga_panel_extractor_api_key_here
 
 The endpoint extracts panels, uploads all extracted panels to UploadThing, and returns panel URLs.
 
+Successful responses include:
+
+- `panel_urls`: flat list of panel URLs in the extractor's manga reading order.
+- `panels`: flat list of `{ source_name, panel_index, panel_url }` objects in that same order.
+- `sources`: per-input grouping with `panels` and `panel_urls`, both ordered by `panel_index`.
+
 Example call:
 
 ```bash

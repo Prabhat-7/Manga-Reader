@@ -7,6 +7,10 @@ from image_processing.image import is_contour_rectangular, apply_adaptive_thresh
 from myutils.myutils import load_images, load_image
 from tqdm import tqdm
 
+
+def has_ximgproc_thinning() -> bool:
+    return hasattr(cv2, "ximgproc") and hasattr(cv2.ximgproc, "thinning")
+
 class OutputMode:
     BOUNDING = 'bounding'
     MASKED = 'masked'
@@ -368,7 +372,9 @@ def get_page_without_background(grayscale_image: np.ndarray, background_mask: np
     mask_area = np.count_nonzero(background_mask)
     mask_area_ratio = mask_area / background_mask.size
 
-    if STRIPE_FORMAT_MASK_AREA_RATIO > mask_area_ratio and split_joint_panels:
+    can_split_joint_panels = split_joint_panels and has_ximgproc_thinning()
+
+    if STRIPE_FORMAT_MASK_AREA_RATIO > mask_area_ratio and can_split_joint_panels:
         page_without_background = joint_panel_split_extraction(grayscale_image, background_mask)
     else:
         page_without_background = cv2.subtract(grayscale_image, background_mask)

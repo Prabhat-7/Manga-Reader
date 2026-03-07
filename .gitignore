@@ -34,3 +34,5 @@ next-env.d.ts
 /services/voice-cloning/models/
 /services/voice-cloning/inputs/
 /services/voice-cloning/outputs/
+
+/src/generated/prisma
